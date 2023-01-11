@@ -59,7 +59,7 @@ public class RecommendFragment extends FragmentBase
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_recomment, container, false);
+        View view = inflater.inflate(R.layout.fragment_recommend, container, false);
 
         mRecyclerView = view.findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(true);

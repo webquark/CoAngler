@@ -23,4 +23,11 @@ public interface RetrofitService {
      */
     @GET("/api/facility/list/mylist.php")
     Call<APIResponse<Facility>> getMyFacility(@Query("keyword") String userName);
+
+    /**
+     * WaterLevelList
+     * @return
+     */
+    @GET("/api/reservoir/waterLevel/list.php")
+    Call<APIResponse<Facility>> getWaterLevelList();
 }

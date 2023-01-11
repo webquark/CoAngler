@@ -36,5 +36,9 @@ public class RetrofitClient {
     public static void getMyFacility(String userId, Callback<APIResponse<Facility>> callback){
         getRetrofitService().getMyFacility(userId).enqueue(callback);
     }
+
+    public static void getWaterLevelList(Callback<APIResponse<Facility>> callback){
+        getRetrofitService().getWaterLevelList().enqueue(callback);
+    }
 }
 
