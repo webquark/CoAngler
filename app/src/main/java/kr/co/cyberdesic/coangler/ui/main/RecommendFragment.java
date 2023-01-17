@@ -26,13 +26,12 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link RecommendFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * 추천 탭 프로그먼트
+ * {@link RecommendFragment#newInstance} 를 호출하여 인스턴스화
  */
 public class RecommendFragment extends FragmentBase
         implements MyFacilityAdapter.OnItemClickListener,
-        SwipeRefreshLayout.OnRefreshListener {
+                    SwipeRefreshLayout.OnRefreshListener {
 
     private static final String LOG_TAG = "Recommend";
 

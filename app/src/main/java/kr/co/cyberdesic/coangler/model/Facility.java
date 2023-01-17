@@ -17,10 +17,12 @@ public class Facility extends ModelBase {
     public String latitude;
     public String longitude;
     public String area;
+    public String sdate;
+    public String edate;
     public ArrayList<WaterLevel> level;
+    public String last_date;
     public String last_level;
     public String last_rate;
-    public String last_date;
 
     public Facility() {
 

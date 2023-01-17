@@ -40,5 +40,10 @@ public class RetrofitClient {
     public static void getWaterLevelList(Callback<APIResponse<Facility>> callback){
         getRetrofitService().getWaterLevelList().enqueue(callback);
     }
+
+    public static void getWaterLevel(String facCode, String sdate, String edate,
+                                     Callback<APIResponse<Facility>> callback){
+        getRetrofitService().getWaterLevel(facCode, sdate, edate).enqueue(callback);
+    }
 }
 

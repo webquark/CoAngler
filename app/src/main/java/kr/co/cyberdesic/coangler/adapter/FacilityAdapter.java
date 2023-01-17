@@ -15,7 +15,7 @@ import kr.co.cyberdesic.coangler.R;
 import kr.co.cyberdesic.coangler.model.Facility;
 import kr.co.cyberdesic.coangler.model.ModelBase;
 
-public class MyFacilityAdapter extends RecyclerView.Adapter<MyFacilityAdapter.ViewHolder> {
+public class FacilityAdapter extends RecyclerView.Adapter<FacilityAdapter.ViewHolder> {
 
     private Context mContext;
     private List<Facility> mItems;
@@ -49,25 +49,25 @@ public class MyFacilityAdapter extends RecyclerView.Adapter<MyFacilityAdapter.Vi
         }
     }
 
-    public MyFacilityAdapter(Context context, List<Facility> items) {
+    public FacilityAdapter(Context context, List<Facility> items) {
         mContext = context;
         mItems = items;
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_myfacility, parent, false);
+    public FacilityAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_facility, parent, false);
 
-        return new ViewHolder(itemView);
+        return new FacilityAdapter.ViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, @SuppressLint("RecyclerView") final int position) {
+    public void onBindViewHolder(final FacilityAdapter.ViewHolder holder, @SuppressLint("RecyclerView") final int position) {
         final Facility facility = mItems.get(position);
 
         holder.tvName.setText(facility.name);
 
-        if (facility.level != null && facility.level.size() > 0) {
+        if (facility.last_level != null) {
             holder.tvLevel.setText( String.format("%sm(%s%%)", facility.last_level, facility.last_rate) );
             holder.tvDate.setText( facility.last_date);
 
@@ -86,7 +86,7 @@ public class MyFacilityAdapter extends RecyclerView.Adapter<MyFacilityAdapter.Vi
                 mSelectedViewHolder = holder;
                 mSelectedItemPosition = position;
 
-                MyFacilityAdapter.this.notifyDataSetChanged();
+                FacilityAdapter.this.notifyDataSetChanged();
             }
         });
 

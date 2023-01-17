@@ -3,64 +3,175 @@ package kr.co.cyberdesic.coangler.ui.main;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+
+import java.util.ArrayList;
+import java.util.function.Consumer;
+
 import kr.co.cyberdesic.coangler.R;
+import kr.co.cyberdesic.coangler.adapter.FacilityAdapter;
+import kr.co.cyberdesic.coangler.adapter.MyFacilityAdapter;
+import kr.co.cyberdesic.coangler.model.APIResponse;
+import kr.co.cyberdesic.coangler.model.Facility;
+import kr.co.cyberdesic.coangler.model.ModelBase;
+import kr.co.cyberdesic.coangler.server.RetrofitClient;
+import kr.co.cyberdesic.coangler.ui.fragment.FragmentBase;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link AdminFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * 관리자 탭 프래그먼트
+ * {@link AdminFragment#newInstance} 를 호출하여 인스턴스화
  */
-public class AdminFragment extends Fragment {
+public class AdminFragment extends FragmentBase
+        implements FacilityAdapter.OnItemClickListener,
+                    SwipeRefreshLayout.OnRefreshListener {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String LOG_TAG = "Admin";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private FacilityAdapter mFacilityAdapter;
+    private RecyclerView mRecyclerView;
+    private SwipeRefreshLayout mSwipeContainer;
+
+    private ArrayList<Facility> mFacilities = new ArrayList<>();    // Facility 목록
 
     public AdminFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment AdminFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static AdminFragment newInstance(String param1, String param2) {
+    public static AdminFragment newInstance() {
         AdminFragment fragment = new AdminFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
+
         return fragment;
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_admin, container, false);
+
+        mRecyclerView = view.findViewById(R.id.recycler_view);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+
+        mSwipeContainer = view.findViewById(R.id.swipe_container);
+        mSwipeContainer.setOnRefreshListener(this);
+
+        mFacilityAdapter = new FacilityAdapter(mContext, mFacilities);
+        mFacilityAdapter.setOnItemClickListener(this);
+        mRecyclerView.setAdapter(mFacilityAdapter);
+
+        FloatingActionButton fab = view.findViewById(R.id.fab);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+
+                getWaterLevel(0);
+            }
+        });
+
+        loadWaterLevelList();
+
+        return view;
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_admin, container, false);
+    public void onItemClick(ModelBase item) {
+        Facility facility = (Facility)item;
+
+        showToast(facility.name + "이 선택되었습니다.");
+    }
+
+    @Override
+    public void onRefresh() {
+        loadWaterLevelList();
+    }
+
+    private void getWaterLevel(final int position) {
+        final Facility facility = mFacilities.get(position);
+        mRecyclerView.scrollToPosition(position);
+        
+        Log.d(LOG_TAG, facility.fac_code + ": " + facility.name);
+
+        RetrofitClient.getWaterLevel(facility.fac_code, facility.sdate, facility.edate,
+                                            new Callback<APIResponse<Facility>>() {
+            @Override
+            public void onResponse(Call<APIResponse<Facility>> call, Response<APIResponse<Facility>> response) {
+                if (response.isSuccessful()){
+
+                    if (response.body().getData() == null) {
+                        Log.d(LOG_TAG, facility.fac_code + ": no data");
+
+                        if ((position + 1) < mFacilities.size()) {
+                            getWaterLevel(position + 1);
+                        }
+                    }
+
+                    Facility res = (Facility)response.body().getData().get(0);
+
+                    facility.last_date = res.last_date;
+                    facility.last_level = res.last_level;
+                    facility.last_rate = res.last_rate;
+                    Log.d(LOG_TAG, res.fac_code + ": " + res.name + ": " + res.last_level);
+
+                    mFacilities.set(position, facility);
+                    mFacilityAdapter.notifyItemChanged(position);
+                }
+
+                if ((position + 1) < mFacilities.size()) {
+                    getWaterLevel(position + 1);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<APIResponse<Facility>> call, Throwable t) {
+                mSwipeContainer.setRefreshing(false);
+                Log.d(LOG_TAG,"onFailure : " + t.getMessage());
+            }
+        });
+
+    }
+
+    // 수위데이터를 읽어오기 위한 시설 목록
+    private void loadWaterLevelList() {
+        RetrofitClient.getWaterLevelList(new Callback<APIResponse<Facility>>() {
+            @Override
+            public void onResponse(Call<APIResponse<Facility>> call, Response<APIResponse<Facility>> response) {
+                if (response.isSuccessful()){
+                    mFacilities.clear();
+
+                    if (response.body().getData() == null) {
+                        showToast("데이터가 없습니다.");
+                        Log.i(LOG_TAG,"데이터가 없습니다.");
+                        return;
+                    }
+
+                    mFacilities.addAll(response.body().getData());
+                    mFacilityAdapter.notifyDataSetChanged();
+                }
+
+                mSwipeContainer.setRefreshing(false);
+            }
+
+            @Override
+            public void onFailure(Call<APIResponse<Facility>> call, Throwable t) {
+                mSwipeContainer.setRefreshing(false);
+                Log.d(LOG_TAG,"onFailure : " + t.getMessage());
+            }
+        });
+
     }
 }

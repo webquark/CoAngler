@@ -30,4 +30,13 @@ public interface RetrofitService {
      */
     @GET("/api/reservoir/waterLevel/list.php")
     Call<APIResponse<Facility>> getWaterLevelList();
+
+    /**
+     * WaterLevel
+     * @return
+     */
+    @GET("/api/reservoir/waterLevel/get.php")
+    Call<APIResponse<Facility>> getWaterLevel(@Query("fcode") String facCode,
+                                              @Query("sdate") String sdate,
+                                              @Query("edate") String edate);
 }

@@ -19,12 +19,22 @@ public class APIResponse<T> {
     @SerializedName("code")
     @Expose
     public String code = "-1";
+
     @SerializedName("message")
     @Expose
     public String message;
+
     @SerializedName("data")
     @Expose
     public List<T> data;
+
+    @SerializedName("sql")
+    @Expose
+    public String sql;
+
+    @SerializedName("api")
+    @Expose
+    public String api;
 
     /**
      * API 호출결과의 성공여부

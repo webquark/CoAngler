@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -17,6 +18,7 @@ import kr.co.cyberdesic.coangler.widget.SimpleProgressDialog;
 
 public class ActivityBase extends AppCompatActivity {
 	protected Context mContext;
+
 	protected SimpleProgressDialog mProgressDlg;
 	
 	@Override
@@ -73,11 +75,6 @@ public class ActivityBase extends AppCompatActivity {
 		mProgressDlg.setMessage(message);
 	}
 	
-	public int Alert(int msgResId) {
-		return Alert(this.getResources().getString(msgResId));
-		
-	}
-
 	/**
 	 * Shows a {@link Snackbar} using {@code text}.
 	 *
@@ -105,7 +102,23 @@ public class ActivityBase extends AppCompatActivity {
 				.setAction(getString(actionStringId), listener).show();
 	}
 
-	public int Alert(String msg) {
+	public interface AlertDialogCallback {
+		public void onOKClick();
+	}
+
+	public int Alert(int msgResId) {
+		return Alert(this.getResources().getString(msgResId));
+	}
+
+	public int Alert(CharSequence msg) {
+		return Alert(msg, null);
+	}
+
+	public int Alert(int msgResId, final AlertDialogCallback callback) {
+		return Alert(this.getResources().getString(msgResId), callback);
+	}
+
+	public int Alert(CharSequence msg, final AlertDialogCallback callback) {
 		CustomDialog.Builder alert = new CustomDialog.Builder(ActivityBase.this);
 		 
 		// set dialog title & message
@@ -114,7 +127,11 @@ public class ActivityBase extends AppCompatActivity {
 			.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog,int id) {
 						// if this button is clicked, just close the dialog box and do nothing
-						dialog.cancel();
+						dialog.dismiss();
+
+						if (callback != null) {
+							callback.onOKClick();
+						}
 					}
 				});
 		

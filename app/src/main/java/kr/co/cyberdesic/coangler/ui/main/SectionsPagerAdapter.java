@@ -3,7 +3,6 @@ package kr.co.cyberdesic.coangler.ui.main;
 import android.content.Context;
 
 import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -30,10 +29,10 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
             return RecommendFragment.newInstance();
 
         } else if (position == 2) {
-            return AdminFragment.newInstance("aaa", "bbb");
+            return AdminFragment.newInstance();
 
         } else {
-            return PlaceholderFragment.newInstance(position + 1);
+            return MapFragment.newInstance();
         }
     }
 
