@@ -46,6 +46,8 @@ public class AdminFragment extends FragmentBase
 
     private ArrayList<Facility> mFacilities = new ArrayList<>();    // Facility 목록
 
+    private boolean mGetWaterLevelStarted = false;
+
     public AdminFragment() {
         // Required empty public constructor
     }
@@ -59,6 +61,8 @@ public class AdminFragment extends FragmentBase
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_admin, container, false);
+
+        mContext = getContext();
 
         mRecyclerView = view.findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(true);
@@ -79,7 +83,12 @@ public class AdminFragment extends FragmentBase
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
 
-                getWaterLevel(0);
+                if (mGetWaterLevelStarted == false) {
+                    mGetWaterLevelStarted = true;
+                    getWaterLevel(0);
+                } else {
+                    mGetWaterLevelStarted = false;
+                }
             }
         });
 
@@ -101,6 +110,11 @@ public class AdminFragment extends FragmentBase
     }
 
     private void getWaterLevel(final int position) {
+
+        if (!mGetWaterLevelStarted) {
+            return;
+        }
+
         final Facility facility = mFacilities.get(position);
         mRecyclerView.scrollToPosition(position);
         
