@@ -27,10 +27,23 @@ public class FragmentBase extends Fragment {
     protected ProgressBar mProgressBar = null;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_base, container, false);
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
         mContext = getContext();
+
+        if (mContext != null) {
+            fetchData();
+        }
+    }
+
+    protected void fetchData() {
+
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_base, container, false);
 
         return view;
     }
@@ -136,6 +149,6 @@ public class FragmentBase extends Fragment {
     }
 
     protected void showToast(String text) {
-        Toast.makeText(mContext, text, Toast.LENGTH_SHORT);
+        Toast.makeText(mContext, text, Toast.LENGTH_SHORT).show();
     }
 }

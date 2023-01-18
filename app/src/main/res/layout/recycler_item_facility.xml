@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/content_frame"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -81,6 +82,7 @@
             android:layout_height="24dp"
             android:layout_marginLeft="@dimen/marginXtraWide"
             android:layout_marginRight="@dimen/marginWide"
+            app:tint="#0000FF"
             android:src="@drawable/ic_arrow_drop_down"/>
     </LinearLayout>
 </LinearLayout>

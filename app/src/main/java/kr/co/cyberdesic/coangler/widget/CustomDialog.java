@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -33,16 +34,27 @@ public class CustomDialog extends Dialog {
 		
 	    protected String  mTitle;
 	    protected String  mMessage;
+
+		/*
+		 * Close button
+		 */
+		protected ImageView mBtnPopClose;
+
+		/*
+		 * Command button text
+		 */
 	    protected String  mPositiveButtonText;
 	    protected String  mNeutralButtonText;
 	    protected String  mNegativeButtonText;
-	    protected OnClickListener mPositiveButtonClickListener;
+
+		/*
+		 * Command button listener
+		 */
+		protected OnClickListener mPositiveButtonClickListener;
 	    protected OnClickListener mNeutralButtonClickListener;
 	    protected OnClickListener mNegativeButtonClickListener;
-	    
-	    protected View mContentView;
-	    protected View mContentView2;
-	    protected View mContentView3;
+
+		protected View mContentView;
 	    protected int  mLayoutResId = R.layout.dialog_custom;
 
 	    protected OnDialogResultListner mDialogResultListener = null;
@@ -58,38 +70,37 @@ public class CustomDialog extends Dialog {
 	    public Builder(Context context) {
             this.mContext = context;
         }
-	    
+
+		/**
+		 * 커스텀 다이얼로그 생성하기
+		 */
 		public CustomDialog create() {
 			LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			
 			// instantiate the dialog with the custom Theme
 	        final CustomDialog dialog = new CustomDialog(mContext, R.style.CustomDialog);
-	        
-	        
-	        
+
 	        View layout = inflater.inflate(mLayoutResId, null);
 	        dialog.addContentView(layout, new LayoutParams (LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));		//width,height
 	        
-	    
-		
-	        // set the dialog title
+	    	// set the dialog title
 	        ((TextView)layout.findViewById(R.id.title)).setText( Html.fromHtml(mTitle) );
-	        
-	        
+
 	        // set the content message
 	        if (mMessage != null) {
 	            ((TextView) layout.findViewById(R.id.message)).setText(mMessage);
-	        } 
-	        else if (mContentView != null) {
+
+			} else if (mContentView != null) {
 	            // if no message set
 	            // add the contentView to the dialog body
 	        	LinearLayout content = (LinearLayout) layout.findViewById(R.id.content);
 	        	content.removeAllViews();
 	        	content.addView(mContentView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-	 
 	        }
-	        
-	        
+
+			// Close button
+			///mBtnPopClose = (ImageView) layout.findViewById(R.id.btn_pop_close);
+
 	        // set the confirm button
 	        Button btnPositive = (Button) layout.findViewById(R.id.positiveButton);
             if (mPositiveButtonText != null) {

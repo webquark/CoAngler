@@ -3,17 +3,17 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="appbar_padding">16dp</dimen>
-    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="fab_margin">1dp</dimen>
     <dimen name="appbar_padding_top">8dp</dimen>
 
 
     <!-- Text size -->
     <dimen name="textVerySmall">8sp</dimen>
-    <dimen name="textTiny">11sp</dimen>
-    <dimen name="textSmall">12sp</dimen>
-    <dimen name="textMediumSmall">14sp</dimen>
-    <dimen name="textMedium">17sp</dimen>
-    <dimen name="textMediumLarge">20sp</dimen>
+    <dimen name="textTiny">10sp</dimen>
+    <dimen name="textSmall">11sp</dimen>
+    <dimen name="textMediumSmall">12sp</dimen>
+    <dimen name="textMedium">14sp</dimen>
+    <dimen name="textMediumLarge">18sp</dimen>
     <dimen name="textLarge">24sp</dimen>
     <dimen name="textXtraLarge">28sp</dimen>
     <dimen name="text2XtraLarge">36sp</dimen>

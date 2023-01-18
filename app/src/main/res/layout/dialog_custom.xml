@@ -1,31 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/dialog_frame"
+    android:layout_width="800dp"
     android:layout_height="wrap_content"
-    android:background="#FFFFFF"
-    android:minWidth="280dip"
+    android:padding="1dp"
+    android:minWidth="280dp"
+    android:background="#3a9ba1"
     android:orientation="vertical" >
 
     <LinearLayout
         style="@style/CustomDialog.Frame"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical" >
+        android:orientation="vertical"
+        android:background="#FFF">
 
         <LinearLayout
             style="@style/CustomDialog.Header"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/title"
-                style="@style/DialogText.Title"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:gravity="left"
-                android:singleLine="true" />
+               <TextView
+                    android:id="@+id/title"
+                    style="@style/DialogText.Title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:gravity="left"
+                    android:singleLine="true" />
+
         </LinearLayout>
 
         <LinearLayout

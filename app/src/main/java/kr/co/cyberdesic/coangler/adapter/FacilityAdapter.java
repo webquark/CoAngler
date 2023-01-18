@@ -2,6 +2,7 @@ package kr.co.cyberdesic.coangler.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import kr.co.cyberdesic.coangler.R;
+import kr.co.cyberdesic.coangler.helper.ImageViewHelper;
 import kr.co.cyberdesic.coangler.model.Facility;
 import kr.co.cyberdesic.coangler.model.ModelBase;
 import kr.co.cyberdesic.coangler.util.DateUtil;
@@ -102,9 +104,15 @@ public class FacilityAdapter extends RecyclerView.Adapter<FacilityAdapter.ViewHo
 
             if (fRate < fRate1) {
                 holder.ivArrow.setImageDrawable(mContext.getDrawable(R.drawable.ic_arrow_drop_down));
+                ImageViewHelper.with(mContext)
+                        .withImageView(holder.ivArrow)
+                        .tint(Color.parseColor("#0000FF"));
 
             } else {
                 holder.ivArrow.setImageDrawable(mContext.getDrawable(R.drawable.ic_arrow_drop_up));
+                ImageViewHelper.with(mContext)
+                        .withImageView(holder.ivArrow)
+                        .tint(Color.parseColor("#FF0000"));
             }
 
         } else {
