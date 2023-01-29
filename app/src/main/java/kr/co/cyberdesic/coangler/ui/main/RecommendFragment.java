@@ -36,6 +36,7 @@ public class RecommendFragment extends FragmentBase
     private static final String LOG_TAG = "Recommend";
 
     private MyFacilityAdapter mMyFacilityAdapter;
+    private LinearLayoutManager mLayoutManager;
     private RecyclerView mRecyclerView;
     private SwipeRefreshLayout mSwipeContainer;
 
@@ -74,6 +75,10 @@ public class RecommendFragment extends FragmentBase
         mMyFacilityAdapter = new MyFacilityAdapter(mContext, mMyFacilities);
         mMyFacilityAdapter.setOnItemClickListener(this);
         mRecyclerView.setAdapter(mMyFacilityAdapter);
+
+        mLayoutManager = new LinearLayoutManager(mContext);
+        mLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        mRecyclerView.setLayoutManager(mLayoutManager);
 
         loadMyFacility();
 

@@ -4,8 +4,9 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:minWidth="100dp"
-    android:maxHeight="100dp"
     android:gravity="center"
+    android:padding="@dimen/marginNarrow"
+    android:background="@drawable/bg_my_facility"
     android:orientation="vertical">
 
     <TextView
@@ -18,23 +19,58 @@
         android:textStyle="bold"
         android:text="예당저수지"/>
 
-    <TextView
-        android:id="@+id/tv_level"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textColor="#555"
-        android:textSize="@dimen/textMediumSmall"
-        android:text="19.46m (40.30 %)"/>
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tv_date"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="right"
-        android:layout_gravity="right"
-        android:textColor="#999"
-        android:textSize="@dimen/textVerySmall"
-        android:text="08.22"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/tv_rate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:textColor="#555"
+                    android:textSize="@dimen/textMedium"
+                    android:text="40.30%"/>
+
+                <TextView
+                    android:id="@+id/tv_level"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textColor="#555"
+                    android:textSize="@dimen/textSmall"
+                    android:text="19.46m"/>
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/iv_arrow"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="@dimen/marginNormal"
+                android:src="@drawable/ic_arrow_down" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:layout_gravity="right"
+            android:textColor="#999"
+            android:textSize="@dimen/textVerySmall"
+            android:text="08.22"/>
+    </LinearLayout>
 
 </LinearLayout>
