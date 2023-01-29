@@ -40,11 +40,13 @@ public class FacilityAdapter extends RecyclerView.Adapter<FacilityAdapter.ViewHo
         public ViewGroup contentFrame;
         public TextView tvName;
         public TextView tvLevel;
+        public TextView tvRate;
         public TextView tvDate;
 
         public ViewGroup vgLast;
         public ImageView ivArrow;
         public TextView tvLevel1;
+        public TextView tvRate1;
         public TextView tvDate1;
 
         public ViewHolder(View view) {
@@ -54,11 +56,13 @@ public class FacilityAdapter extends RecyclerView.Adapter<FacilityAdapter.ViewHo
 
             tvName = (TextView) view.findViewById(R.id.tv_name);
             tvLevel = (TextView) view.findViewById(R.id.tv_level);
+            tvRate = (TextView) view.findViewById(R.id.tv_rate);
             tvDate = (TextView) view.findViewById(R.id.tv_date);
 
             vgLast = (ViewGroup) view.findViewById(R.id.vg_last);
             ivArrow = (ImageView) view.findViewById(R.id.iv_arrow);
             tvLevel1 = (TextView) view.findViewById(R.id.tv_level1);
+            tvRate1 = (TextView) view.findViewById(R.id.tv_rate1);
             tvDate1 = (TextView) view.findViewById(R.id.tv_date1);
 
         }
@@ -83,40 +87,52 @@ public class FacilityAdapter extends RecyclerView.Adapter<FacilityAdapter.ViewHo
         holder.tvName.setText(facility.name);
 
         float fRate = 0;
+        float fLevel = 0;
 
+        // 마지막 수위
         if (facility.level != null && facility.level.size() > 0) {
+            fLevel = Float.parseFloat( facility.getLevel(0) );
             fRate = Float.parseFloat( facility.getRate(0) );
 
-            holder.tvLevel.setText( String.format("%.2f%%", fRate) );
+            holder.tvLevel.setText( String.format("%.2fm", fLevel) );
+            holder.tvRate.setText( String.format("%.2f%%", fRate) );
             holder.tvDate.setText(DateUtil.dateFormat(facility.getDate(0), "MM.dd"));
 
         } else {
             holder.tvLevel.setText("No data");
+
             holder.tvDate.setText("--");
         }
 
+        // 신규 수위
         if (facility.last_level != null) {
-            float fRate1 = Float.parseFloat( facility.last_rate );
+            float fLevel1 = Float.parseFloat( facility.last_level );
 
             holder.vgLast.setVisibility(View.VISIBLE);
-            holder.tvLevel1.setText( String.format("%s%%(%s)", facility.last_rate, facility.last_level) );
+            holder.tvLevel1.setText( String.format("%.2fm", Float.parseFloat(facility.last_level)) );
+            holder.tvRate1.setText( String.format("%s%%", facility.last_rate) );
             holder.tvDate1.setText(DateUtil.dateFormat(facility.last_date, "MM.dd"));
 
-            if (fRate < fRate1) {
-                holder.ivArrow.setImageDrawable(mContext.getDrawable(R.drawable.ic_arrow_drop_down));
+            if (fLevel < fLevel1) {
+                holder.ivArrow.setVisibility(View.VISIBLE);
+                holder.ivArrow.setImageDrawable(mContext.getDrawable(R.drawable.ic_arrow_drop_up));
                 ImageViewHelper.with(mContext)
                         .withImageView(holder.ivArrow)
                         .tint(Color.parseColor("#0000FF"));
 
+            } else if (fLevel == fLevel1) {
+                holder.ivArrow.setVisibility(View.INVISIBLE);
+
             } else {
-                holder.ivArrow.setImageDrawable(mContext.getDrawable(R.drawable.ic_arrow_drop_up));
+                holder.ivArrow.setVisibility(View.VISIBLE);
+                holder.ivArrow.setImageDrawable(mContext.getDrawable(R.drawable.ic_arrow_drop_down));
                 ImageViewHelper.with(mContext)
                         .withImageView(holder.ivArrow)
                         .tint(Color.parseColor("#FF0000"));
             }
 
         } else {
-            holder.vgLast.setVisibility(View.GONE);
+            holder.vgLast.setVisibility(View.INVISIBLE);
         }
 
         holder.contentFrame.setOnClickListener(new View.OnClickListener() {

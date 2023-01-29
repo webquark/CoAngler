@@ -52,6 +52,7 @@ public class AdminFragment extends FragmentBase
     private ArrayList<Facility> mFacilities = new ArrayList<>();    // Facility 목록
 
     private boolean mGetWaterLevelStarted = false;
+    private int mCurrentIndex = 0;
 
     public AdminFragment() {
         // Required empty public constructor
@@ -65,30 +66,32 @@ public class AdminFragment extends FragmentBase
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_admin, container, false);
+        mView = inflater.inflate(R.layout.fragment_admin, container, false);
 
         mContext = getContext();
 
-        mRecyclerView = view.findViewById(R.id.recycler_view);
+        setProgressBar(R.id.progressBar);
+
+        mRecyclerView = mView.findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
 
-        mSwipeContainer = view.findViewById(R.id.swipe_container);
+        mSwipeContainer = mView.findViewById(R.id.swipe_container);
         mSwipeContainer.setOnRefreshListener(this);
 
         mFacilityAdapter = new FacilityAdapter(mContext, mFacilities);
         mFacilityAdapter.setOnItemClickListener(this);
         mRecyclerView.setAdapter(mFacilityAdapter);
 
-        mFab = view.findViewById(R.id.fab);
+        mFab = mView.findViewById(R.id.fab);
         mFab.setOnClickListener(this);
 
-        mIvTop = view.findViewById(R.id.iv_top);
+        mIvTop = mView.findViewById(R.id.iv_top);
         mIvTop.setOnClickListener(this);
 
         loadWaterLevelList();
 
-        return view;
+        return mView;
     }
 
     @Override
@@ -103,11 +106,18 @@ public class AdminFragment extends FragmentBase
         loadWaterLevelList();
     }
 
+    /**
+     * 시설의 수위 데이터 읽어오기 
+     * @param position 리스트에서 대상시설의 위치
+     */
     private void getWaterLevel(final int position) {
 
         if (!mGetWaterLevelStarted) {
             return;
         }
+
+        mCurrentIndex = position;
+        setProgress(mCurrentIndex);
 
         final Facility facility = mFacilities.get(position);
         mRecyclerView.scrollToPosition(position);
@@ -161,12 +171,15 @@ public class AdminFragment extends FragmentBase
 
     }
 
-    // 수위데이터를 읽어오기 위한 시설 목록
+    /**
+     * 수위데이터를 읽어오기 위한 시설 목록
+     */
     private void loadWaterLevelList() {
         RetrofitClient.getWaterLevelList(new Callback<APIResponse<Facility>>() {
             @Override
             public void onResponse(Call<APIResponse<Facility>> call, Response<APIResponse<Facility>> response) {
                 if (response.isSuccessful()) {
+                    mCurrentIndex = 0;
                     mFacilities.clear();
 
                     if (response.body().getData() == null) {
@@ -177,6 +190,8 @@ public class AdminFragment extends FragmentBase
 
                     mFacilities.addAll(response.body().getData());
                     mFacilityAdapter.notifyDataSetChanged();
+
+                    getProgressBar().setMax(mFacilities.size());
                 }
 
                 mSwipeContainer.setRefreshing(false);
@@ -207,14 +222,24 @@ public class AdminFragment extends FragmentBase
         }
     }
 
+    /**
+     * 수위 데이터 가져오기 시작
+     */
     private void startGetWaterLevel() {
         mGetWaterLevelStarted = true;
         mFab.setImageDrawable(mContext.getDrawable(R.drawable.ic_pause));
-        getWaterLevel(0);
+
+        showProgress();
+        getWaterLevel(mCurrentIndex);
     }
 
+    /**
+     * 수위 데이터 가져오기 중지
+     */
     private void pauseGetWaterLevel() {
         mGetWaterLevelStarted = false;
         mFab.setImageDrawable(mContext.getDrawable(R.drawable.ic_download));
+
+        hideProgress();
     }
 }

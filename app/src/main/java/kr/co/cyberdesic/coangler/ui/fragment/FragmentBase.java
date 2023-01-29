@@ -43,9 +43,9 @@ public class FragmentBase extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_base, container, false);
+        mView = inflater.inflate(R.layout.fragment_base, container, false);
 
-        return view;
+        return mView;
     }
 
     public ProgressBar getProgressBar() {
@@ -63,14 +63,26 @@ public class FragmentBase extends Fragment {
 
     public void showProgress() {
         if (mProgressBar != null) {
+            if (mProgressBar.getParent() != null) {
+                ((ViewGroup) mProgressBar.getParent()).setVisibility(View.VISIBLE);
+            }
+
             mProgressBar.setVisibility(View.VISIBLE);
         }
     }
 
     public void hideProgress() {
         if (mProgressBar != null) {
+            if (mProgressBar.getParent() != null) {
+                ((ViewGroup) mProgressBar.getParent()).setVisibility(View.GONE);
+            }
+            
             mProgressBar.setVisibility(View.GONE);
         }
+    }
+
+    public void setProgress(int progress) {
+        mProgressBar.setProgress(progress);
     }
 
     public int Alert(int msgResId) {
