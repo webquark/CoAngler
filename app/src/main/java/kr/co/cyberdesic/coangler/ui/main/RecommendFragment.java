@@ -16,6 +16,7 @@ import java.util.ArrayList;
 
 import kr.co.cyberdesic.coangler.R;
 import kr.co.cyberdesic.coangler.adapter.MyFacilityAdapter;
+import kr.co.cyberdesic.coangler.decoration.SpacesItemDecoration;
 import kr.co.cyberdesic.coangler.model.APIResponse;
 import kr.co.cyberdesic.coangler.model.Facility;
 import kr.co.cyberdesic.coangler.model.ModelBase;
@@ -80,6 +81,10 @@ public class RecommendFragment extends FragmentBase
         mLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
+        // 내시설 아이템간 간격
+        int spacingInPixel = getResources().getDimensionPixelSize(R.dimen.marginNormal);
+        mRecyclerView.addItemDecoration(new SpacesItemDecoration(spacingInPixel));
+        
         loadMyFacility();
 
         return view;
