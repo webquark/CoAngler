@@ -2,7 +2,6 @@ package kr.co.cyberdesic.coangler.ui.main;
 
 import android.os.Bundle;
 
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -21,7 +20,6 @@ import kr.co.cyberdesic.coangler.model.APIResponse;
 import kr.co.cyberdesic.coangler.model.Facility;
 import kr.co.cyberdesic.coangler.model.ModelBase;
 import kr.co.cyberdesic.coangler.server.RetrofitClient;
-import kr.co.cyberdesic.coangler.ui.fragment.FragmentBase;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -30,7 +28,7 @@ import retrofit2.Response;
  * 추천 탭 프로그먼트
  * {@link RecommendFragment#newInstance} 를 호출하여 인스턴스화
  */
-public class RecommendFragment extends FragmentBase
+public class RecommendFragment extends SectionFragmentBase
         implements MyFacilityAdapter.OnItemClickListener,
                     SwipeRefreshLayout.OnRefreshListener {
 
@@ -84,7 +82,7 @@ public class RecommendFragment extends FragmentBase
         // 내시설 아이템간 간격
         int spacingInPixel = getResources().getDimensionPixelSize(R.dimen.marginNormal);
         mRecyclerView.addItemDecoration(new SpacesItemDecoration(spacingInPixel));
-        
+
         loadMyFacility();
 
         return view;
@@ -99,6 +97,7 @@ public class RecommendFragment extends FragmentBase
     public void onItemClick(ModelBase item) {
         Facility facility = (Facility)item;
 
+        focusMapPage().focusFacility(facility);
         showToast(facility.name + "이 선택되었습니다.");
     }
 

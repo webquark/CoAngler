@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import com.google.android.material.tabs.TabLayout;
 
+import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
 import kr.co.cyberdesic.coangler.ui.activity.ActivityBase;
@@ -14,6 +15,9 @@ public class MainActivity extends ActivityBase {
 
     private ActivityMainBinding binding;
 
+    private SectionsPagerAdapter mPagerAdapter;
+    private ViewPager mViewPager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -21,11 +25,18 @@ public class MainActivity extends ActivityBase {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
-        ViewPager viewPager = binding.viewPager;
-        viewPager.setAdapter(sectionsPagerAdapter);
+        mPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
+        mViewPager = binding.viewPager;
+        mViewPager.setAdapter(mPagerAdapter);
         TabLayout tabs = binding.tabs;
-        tabs.setupWithViewPager(viewPager);
+        tabs.setupWithViewPager(mViewPager);
+    }
 
+    public SectionsPagerAdapter getPagerAdapter() {
+        return mPagerAdapter;
+    }
+
+    public ViewPager getViewPager() {
+        return mViewPager;
     }
 }

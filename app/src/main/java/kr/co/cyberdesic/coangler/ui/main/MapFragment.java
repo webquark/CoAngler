@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.webkit.WebSettings;
 
 import kr.co.cyberdesic.coangler.R;
+import kr.co.cyberdesic.coangler.model.Facility;
 import kr.co.cyberdesic.coangler.ui.fragment.FragmentBase;
 import kr.co.cyberdesic.coangler.util.Utils;
 import kr.co.cyberdesic.coangler.widget.webview.InnerWebViewClient;
@@ -68,5 +69,11 @@ public class MapFragment extends FragmentBase {
         return view;
     }
 
-
+    /**
+     * 맵에서 지정한 시설 마커를 찾아 포커스를 이동시기고, 시설정보를 표시한다
+     * @param facility
+     */
+    public void focusFacility(Facility facility) {
+        mWebView.loadUrl("javascript: focusFacility('" + facility.fac_type + "', '" + facility.no + "')");
+    }
 }

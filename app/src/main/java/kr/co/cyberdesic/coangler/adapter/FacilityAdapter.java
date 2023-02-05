@@ -115,7 +115,7 @@ public class FacilityAdapter extends RecyclerView.Adapter<FacilityAdapter.ViewHo
 
             if (fLevel < fLevel1) {
                 holder.ivArrow.setVisibility(View.VISIBLE);
-                holder.ivArrow.setImageDrawable(mContext.getDrawable(R.drawable.ic_arrow_drop_up));
+                holder.ivArrow.setImageDrawable(mContext.getDrawable(R.drawable.ic_arrow_up));
                 ImageViewHelper.with(mContext)
                         .withImageView(holder.ivArrow)
                         .tint(Color.parseColor("#0000FF"));
@@ -125,7 +125,7 @@ public class FacilityAdapter extends RecyclerView.Adapter<FacilityAdapter.ViewHo
 
             } else {
                 holder.ivArrow.setVisibility(View.VISIBLE);
-                holder.ivArrow.setImageDrawable(mContext.getDrawable(R.drawable.ic_arrow_drop_down));
+                holder.ivArrow.setImageDrawable(mContext.getDrawable(R.drawable.ic_arrow_down));
                 ImageViewHelper.with(mContext)
                         .withImageView(holder.ivArrow)
                         .tint(Color.parseColor("#FF0000"));
