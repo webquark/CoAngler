@@ -8,6 +8,8 @@ import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import org.json.JSONObject;
+
 import java.util.List;
 
 /**
@@ -87,5 +89,7 @@ public class APIResponse<T> {
 
         Log.d("API CALL", "RES:" + message);
     }
+
+
 }
 

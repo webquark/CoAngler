@@ -7,6 +7,7 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -162,5 +163,13 @@ public class FragmentBase extends Fragment {
 
     protected void showToast(String text) {
         Toast.makeText(mContext, text, Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * API 호출결과 반환된 데이터가 없음을 리포트함
+     */
+    protected void reportNoData() {
+        showToast("데이터가 없습니다.");
+        Log.i(LOG_TAG, "데이터가 없습니다.");
     }
 }

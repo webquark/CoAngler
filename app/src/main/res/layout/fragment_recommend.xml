@@ -7,32 +7,60 @@
     tools:context=".ui.main.RecommendFragment"
     android:orientation="vertical">
 
-    <LinearLayout
+    <!-- 내용 -->
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/marginNormal"
-        android:layout_marginLeft="@dimen/marginNormal"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:padding="@dimen/marginNormal">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="나의 관심시설" />
-
-        <!-- 내용 -->
-        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:id="@+id/swipe_container"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="@dimen/marginNormal">
+            android:orientation="vertical">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_view"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"/>
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/marginNormal"
+                android:layout_marginLeft="@dimen/marginNormal"
+                android:orientation="vertical">
 
-        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-    </LinearLayout>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="저수지권" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:layout_marginRight="@dimen/marginNormal"
+                    android:orientation="horizontal"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/marginNormal"
+                android:layout_marginLeft="@dimen/marginNormal"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="댐권" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_view_dam"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:layout_marginRight="@dimen/marginNormal"
+                    android:orientation="horizontal"/>
+
+            </LinearLayout>
+        </LinearLayout>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </LinearLayout>

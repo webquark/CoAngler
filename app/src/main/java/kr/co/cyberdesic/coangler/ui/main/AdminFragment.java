@@ -2,7 +2,6 @@ package kr.co.cyberdesic.coangler.ui.main;
 
 import android.os.Bundle;
 
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -14,14 +13,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
-import java.util.function.Consumer;
 
 import kr.co.cyberdesic.coangler.R;
 import kr.co.cyberdesic.coangler.adapter.FacilityAdapter;
-import kr.co.cyberdesic.coangler.adapter.MyFacilityAdapter;
 import kr.co.cyberdesic.coangler.model.APIResponse;
 import kr.co.cyberdesic.coangler.model.Facility;
 import kr.co.cyberdesic.coangler.model.ModelBase;
@@ -53,6 +49,7 @@ public class AdminFragment extends FragmentBase
 
     private boolean mGetWaterLevelStarted = false;
     private int mCurrentIndex = 0;
+    private Facility mCurrentFacility;
 
     public AdminFragment() {
         // Required empty public constructor
@@ -95,117 +92,6 @@ public class AdminFragment extends FragmentBase
     }
 
     @Override
-    public void onItemClick(ModelBase item) {
-        Facility facility = (Facility) item;
-
-        showToast(facility.name + "이 선택되었습니다.");
-    }
-
-    @Override
-    public void onRefresh() {
-        loadWaterLevelList();
-    }
-
-    /**
-     * 시설의 수위 데이터 읽어오기 
-     * @param position 리스트에서 대상시설의 위치
-     */
-    private void getWaterLevel(final int position) {
-
-        if (!mGetWaterLevelStarted) {
-            return;
-        }
-
-        mCurrentIndex = position;
-        setProgress(mCurrentIndex);
-
-        final Facility facility = mFacilities.get(position);
-        mRecyclerView.scrollToPosition(position);
-
-        Log.d(LOG_TAG, facility.fac_code + ": " + facility.name);
-
-        RetrofitClient.getWaterLevel(facility.fac_code, facility.sdate, facility.edate,
-                new Callback<APIResponse<Facility>>() {
-                    @Override
-                    public void onResponse(Call<APIResponse<Facility>> call, Response<APIResponse<Facility>> response) {
-                        if (response.isSuccessful()) {
-                            if (response.body().getData() == null) {
-                                Log.d(LOG_TAG, facility.fac_code + ": no data");
-
-                                if ((position + 1) < mFacilities.size()) {
-                                    getWaterLevel(position + 1);
-
-                                } else {
-                                    pauseGetWaterLevel();
-                                }
-
-                                return;
-                            }
-
-                            Facility res = (Facility) response.body().getData().get(0);
-
-                            facility.last_date = res.last_date;
-                            facility.last_level = res.last_level;
-                            facility.last_rate = res.last_rate;
-                            Log.d(LOG_TAG, res.fac_code + ": " + res.name + ": " + res.last_level);
-
-                            mFacilities.set(position, facility);
-                            mFacilityAdapter.notifyItemChanged(position);
-                        }
-
-                        if ((position + 1) < mFacilities.size()) {
-                            getWaterLevel(position + 1);
-
-                        } else {
-                            pauseGetWaterLevel();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<APIResponse<Facility>> call, Throwable t) {
-                        Log.d(LOG_TAG, "onFailure : " + t.getMessage());
-
-                        pauseGetWaterLevel();
-                    }
-                });
-
-    }
-
-    /**
-     * 수위데이터를 읽어오기 위한 시설 목록
-     */
-    private void loadWaterLevelList() {
-        RetrofitClient.getWaterLevelList(new Callback<APIResponse<Facility>>() {
-            @Override
-            public void onResponse(Call<APIResponse<Facility>> call, Response<APIResponse<Facility>> response) {
-                if (response.isSuccessful()) {
-                    mCurrentIndex = 0;
-                    mFacilities.clear();
-
-                    if (response.body().getData() == null) {
-                        showToast("데이터가 없습니다.");
-                        Log.i(LOG_TAG, "데이터가 없습니다.");
-                        return;
-                    }
-
-                    mFacilities.addAll(response.body().getData());
-                    mFacilityAdapter.notifyDataSetChanged();
-
-                    getProgressBar().setMax(mFacilities.size());
-                }
-
-                mSwipeContainer.setRefreshing(false);
-            }
-
-            @Override
-            public void onFailure(Call<APIResponse<Facility>> call, Throwable t) {
-                mSwipeContainer.setRefreshing(false);
-                Log.d(LOG_TAG, "onFailure : " + t.getMessage());
-            }
-        });
-    }
-
-    @Override
     public void onClick(View v) {
         int id = v.getId();
 
@@ -220,6 +106,131 @@ public class AdminFragment extends FragmentBase
         } else if (id == R.id.iv_top) {
             mRecyclerView.scrollToPosition(0);
         }
+    }
+
+    @Override
+    public void onItemClick(ModelBase item) {
+        Facility facility = (Facility) item;
+
+        showToast(facility.name + "이 선택되었습니다.");
+    }
+
+    @Override
+    public void onRefresh() {
+        mGetWaterLevelStarted = false;
+        mCurrentIndex = 0;
+        loadWaterLevelList();
+    }
+
+    /**
+     * 시설의 수위 데이터 읽어오기 
+     * @param position 리스트에서 대상시설의 위치
+     */
+    private void getWaterLevel(final int position) {
+        if (!mGetWaterLevelStarted) {
+            return;
+        }
+
+        mCurrentIndex = position;
+        setProgress(mCurrentIndex);
+
+        mCurrentFacility = mFacilities.get(position);
+        mRecyclerView.scrollToPosition(position);
+
+        Log.d(LOG_TAG, mCurrentFacility.fac_code + ": " + mCurrentFacility.name);
+
+        if (mCurrentFacility.fac_type.equals("reservoir")) {
+            RetrofitClient.getReservoirWaterLevel(mCurrentFacility.fac_code,
+                                                mCurrentFacility.sdate, mCurrentFacility.edate,
+                                                mWaterLevelHandler);
+
+        } else if (mCurrentFacility.fac_type.equals("dam")) {
+            RetrofitClient.getDamWaterLevel(mCurrentFacility.fac_code,
+                                                mCurrentFacility.sdate, mCurrentFacility.edate,
+                                                mWaterLevelHandler);
+        }
+    }
+
+    Callback<APIResponse<Facility>> mWaterLevelHandler = new Callback<APIResponse<Facility>>() {
+        @Override
+        public void onResponse(Call<APIResponse<Facility>> call, Response<APIResponse<Facility>> response) {
+            if (response.isSuccessful()) {
+                if (response.body().getData() == null) {
+                    Log.d(LOG_TAG, mCurrentFacility.fac_code + ": no data");
+
+                    if ((mCurrentIndex + 1) < mFacilities.size()) {
+                        getWaterLevel(mCurrentIndex + 1);
+
+                    } else {
+                        pauseGetWaterLevel();
+                    }
+
+                    return;
+                }
+
+                Facility res = (Facility) response.body().getData().get(0);
+
+                mCurrentFacility.last_date = res.last_date;
+                mCurrentFacility.last_level = res.last_level;
+                mCurrentFacility.last_rate = res.last_rate;
+                Log.d(LOG_TAG, res.fac_code + ": " + res.name + ": " + res.last_level);
+
+                mFacilities.set(mCurrentIndex, mCurrentFacility);
+                mFacilityAdapter.notifyItemChanged(mCurrentIndex);
+            }
+
+            if ((mCurrentIndex + 1) < mFacilities.size()) {
+                getWaterLevel(mCurrentIndex + 1);
+
+            } else {
+                pauseGetWaterLevel();
+            }
+        }
+
+        @Override
+        public void onFailure(Call<APIResponse<Facility>> call, Throwable t) {
+            Log.d(LOG_TAG, "onFailure : " + t.getMessage());
+
+            if ((mCurrentIndex + 1) < mFacilities.size()) {
+                getWaterLevel(mCurrentIndex + 1);
+
+            } else {
+                pauseGetWaterLevel();
+            }
+        }
+    };
+
+    /**
+     * 수위데이터를 읽어오기 위한 시설 목록 가져오기
+     */
+    private void loadWaterLevelList() {
+        RetrofitClient.getWaterLevelList(new Callback<APIResponse<Facility>>() {
+            @Override
+            public void onResponse(Call<APIResponse<Facility>> call, Response<APIResponse<Facility>> response) {
+                if (response.isSuccessful()) {
+                    mCurrentIndex = 0;
+                    mFacilities.clear();
+
+                    if (response.body().getData() == null) {
+                        reportNoData();
+                        return;
+                    }
+
+                    mFacilities.addAll( response.body().getData() );
+                    mFacilityAdapter.notifyDataSetChanged();
+
+                    getProgressBar().setMax(mFacilities.size());
+                }
+
+                mSwipeContainer.setRefreshing(false);
+            }
+
+            @Override
+            public void onFailure(Call<APIResponse<Facility>> call, Throwable t) {
+                mSwipeContainer.setRefreshing(false);
+                Log.d(LOG_TAG, "onFailure : " + t.getMessage());
+            }
+        });
     }
 
     /**

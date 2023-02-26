@@ -3,7 +3,7 @@
 
     <string-array name="tab_text">
         <item>추천</item>
-        <item>인기</item>
+        <item>지도</item>
         <item>관리</item>
     </string-array>
 

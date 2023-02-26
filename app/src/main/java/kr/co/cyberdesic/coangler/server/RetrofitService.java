@@ -18,25 +18,35 @@ public interface RetrofitService {
 
     /**
      * MyFacility
-     * @param userName
+     * @param userId
+     * @param facilityType
      * @return
      */
-    @GET("/api/facility/list/mylist.php")
-    Call<APIResponse<Facility>> getMyFacility(@Query("keyword") String userName);
+    @GET("/api/facility/list/recommendList.php")
+    Call<APIResponse<Facility>> getMyFacility(@Query("uid") String userId, @Query("type") String facilityType);
 
     /**
      * WaterLevelList
      * @return
      */
-    @GET("/api/reservoir/waterLevel/list.php")
+    @GET("/api/facility/list/waterLevelList.php")
     Call<APIResponse<Facility>> getWaterLevelList();
 
     /**
-     * WaterLevel
+     * 저수지 WaterLevel
      * @return
      */
     @GET("/api/reservoir/waterLevel/get.php")
-    Call<APIResponse<Facility>> getWaterLevel(@Query("fcode") String facCode,
-                                              @Query("sdate") String sdate,
-                                              @Query("edate") String edate);
+    Call<APIResponse<Facility>> getReservoirWaterLevel(@Query("fcode") String facCode,
+                                                       @Query("sdate") String sdate,
+                                                       @Query("edate") String edate);
+
+    /**
+     * 댐 WaterLevel
+     * @return
+     */
+    @GET("/api/dam/waterLevel/get.php")
+    Call<APIResponse<Facility>> getDamWaterLevel(@Query("fcode") String facCode,
+                                                 @Query("sdate") String sdate,
+                                                 @Query("edate") String edate);
 }

@@ -34,12 +34,17 @@ public class RecommendFragment extends SectionFragmentBase
 
     private static final String LOG_TAG = "Recommend";
 
-    private MyFacilityAdapter mMyFacilityAdapter;
-    private LinearLayoutManager mLayoutManager;
-    private RecyclerView mRecyclerView;
     private SwipeRefreshLayout mSwipeContainer;
 
-    private ArrayList<Facility> mMyFacilities = new ArrayList<>();    // My Facility 목록
+    private RecyclerView mRecyclerViewReservoir;
+    private MyFacilityAdapter mReservoirAdapter;
+    private ArrayList<Facility> mReservoirList = new ArrayList<>();    // 저수지 목록
+
+    private RecyclerView mRecyclerViewDam;
+    private MyFacilityAdapter mDamAdapter;
+    private ArrayList<Facility> mDamList = new ArrayList<>();    // 댐 목록
+
+    private int mItemSpacingInPixel = 0;
 
     public RecommendFragment() {
         // Required empty public constructor
@@ -64,33 +69,63 @@ public class RecommendFragment extends SectionFragmentBase
             mContext = getContext();
         }
 
-        mRecyclerView = view.findViewById(R.id.recycler_view);
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-
         mSwipeContainer = view.findViewById(R.id.swipe_container);
         mSwipeContainer.setOnRefreshListener(this);
 
-        mMyFacilityAdapter = new MyFacilityAdapter(mContext, mMyFacilities);
-        mMyFacilityAdapter.setOnItemClickListener(this);
-        mRecyclerView.setAdapter(mMyFacilityAdapter);
-
-        mLayoutManager = new LinearLayoutManager(mContext);
-        mLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-
         // 내시설 아이템간 간격
-        int spacingInPixel = getResources().getDimensionPixelSize(R.dimen.marginNormal);
-        mRecyclerView.addItemDecoration(new SpacesItemDecoration(spacingInPixel));
+        mItemSpacingInPixel = getResources().getDimensionPixelSize(R.dimen.marginNormal);
 
-        loadMyFacility();
+        initializeMyReservoirList(view);
+        initializeMyDamList(view);
 
         return view;
+    }
+
+    /**
+     * 내 저수지 목록 초기화
+     * @param view
+     */
+    private void initializeMyReservoirList(View view) {
+        mRecyclerViewReservoir = view.findViewById(R.id.recycler_view);
+        mRecyclerViewReservoir.setHasFixedSize(true);
+        mRecyclerViewReservoir.setLayoutManager(new LinearLayoutManager(mContext));
+
+        mReservoirAdapter = new MyFacilityAdapter(mContext, mReservoirList);
+        mReservoirAdapter.setOnItemClickListener(this);
+        mRecyclerViewReservoir.setAdapter(mReservoirAdapter);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
+        layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        mRecyclerViewReservoir.setLayoutManager(layoutManager);
+
+        mRecyclerViewReservoir.addItemDecoration(new SpacesItemDecoration(mItemSpacingInPixel));
+    }
+
+    /**
+     * 내 댐 목록 초기화
+     * @param view
+     */
+    private void initializeMyDamList(View view) {
+        mRecyclerViewDam = view.findViewById(R.id.recycler_view_dam);
+        mRecyclerViewDam.setHasFixedSize(true);
+        mRecyclerViewDam.setLayoutManager(new LinearLayoutManager(mContext));
+
+        mDamAdapter = new MyFacilityAdapter(mContext, mDamList);
+        mDamAdapter.setOnItemClickListener(this);
+        mRecyclerViewDam.setAdapter(mDamAdapter);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
+        layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        mRecyclerViewDam.setLayoutManager(layoutManager);
+
+        mRecyclerViewDam.addItemDecoration(new SpacesItemDecoration(mItemSpacingInPixel));
     }
 
     @Override
     public void onResume() {
         super.onResume();
+
+        onRefresh();
     }
 
     @Override
@@ -98,31 +133,31 @@ public class RecommendFragment extends SectionFragmentBase
         Facility facility = (Facility)item;
 
         focusMapPage().focusFacility(facility);
-        showToast(facility.name + "이 선택되었습니다.");
     }
 
     @Override
     public void onRefresh() {
-        loadMyFacility();
+        loadMyReservoir();
+        loadMyDam();
     }
 
-    // 나의시설 목록
-    private void loadMyFacility() {
-
-        RetrofitClient.getMyFacility("hansolo", new Callback<APIResponse<Facility>>() {
+    /**
+     * 나의시설 목록 - 저수지
+     */
+    private void loadMyReservoir() {
+        RetrofitClient.getMyFacility("hansolo", "reservoir", new Callback<APIResponse<Facility>>() {
             @Override
             public void onResponse(Call<APIResponse<Facility>> call, Response<APIResponse<Facility>> response) {
-                if (response.isSuccessful()){
-                    mMyFacilities.clear();
+                if (response.isSuccessful()) {
+                    mReservoirList.clear();
 
                     if (response.body().getData() == null) {
-                        showToast("데이터가 없습니다.");
-                        Log.i(LOG_TAG,"데이터가 없습니다.");
+                        reportNoData();
                         return;
                     }
 
-                    mMyFacilities.addAll(response.body().getData());
-                    mMyFacilityAdapter.notifyDataSetChanged();
+                    mReservoirList.addAll(response.body().getData());
+                    mReservoirAdapter.notifyDataSetChanged();
                 }
 
                 mSwipeContainer.setRefreshing(false);
@@ -134,6 +169,36 @@ public class RecommendFragment extends SectionFragmentBase
                 Log.d(LOG_TAG,"onFailure : " + t.getMessage());
             }
         });
-
     }
+
+    /**
+     * 나의시설 목록 - 댐
+     */
+    private void loadMyDam() {
+        RetrofitClient.getMyFacility("hansolo", "dam", new Callback<APIResponse<Facility>>() {
+            @Override
+            public void onResponse(Call<APIResponse<Facility>> call, Response<APIResponse<Facility>> response) {
+                if (response.isSuccessful()) {
+                    mDamList.clear();
+
+                    if (response.body().getData() == null) {
+                        reportNoData();
+                        return;
+                    }
+
+                    mDamList.addAll(response.body().getData());
+                    mDamAdapter.notifyDataSetChanged();
+                }
+
+                mSwipeContainer.setRefreshing(false);
+            }
+
+            @Override
+            public void onFailure(Call<APIResponse<Facility>> call, Throwable t) {
+                mSwipeContainer.setRefreshing(false);
+                Log.d(LOG_TAG,"onFailure : " + t.getMessage());
+            }
+        });
+    }
+
 }

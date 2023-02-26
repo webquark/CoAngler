@@ -5,6 +5,7 @@ import static kr.co.cyberdesic.coangler.application.CoAnglerApplication.CFG_REAL
 
 import kr.co.cyberdesic.coangler.model.APIResponse;
 import kr.co.cyberdesic.coangler.model.Facility;
+import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -33,17 +34,24 @@ public class RetrofitClient {
 //        getRetrofitService().getVersionModel(version).enqueue(callback);
 //    }
 
-    public static void getMyFacility(String userId, Callback<APIResponse<Facility>> callback){
-        getRetrofitService().getMyFacility(userId).enqueue(callback);
+    public static void getMyFacility(String userId, String type, Callback<APIResponse<Facility>> callback){
+        getRetrofitService().getMyFacility(userId, type).enqueue(callback);
     }
 
     public static void getWaterLevelList(Callback<APIResponse<Facility>> callback){
         getRetrofitService().getWaterLevelList().enqueue(callback);
     }
 
-    public static void getWaterLevel(String facCode, String sdate, String edate,
-                                     Callback<APIResponse<Facility>> callback){
-        getRetrofitService().getWaterLevel(facCode, sdate, edate).enqueue(callback);
+    public static void getReservoirWaterLevel(String facCode, String sdate, String edate,
+                                              Callback<APIResponse<Facility>> callback){
+        getRetrofitService().getReservoirWaterLevel(facCode, sdate, edate).enqueue(callback);
+    }
+
+    public static void getDamWaterLevel(String facCode, String sdate, String edate,
+                                        Callback<APIResponse<Facility>> callback){
+
+        Call<APIResponse<Facility>> response = getRetrofitService().getDamWaterLevel(facCode, sdate, edate);
+        response.enqueue(callback);
     }
 }
 
